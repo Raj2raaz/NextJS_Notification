@@ -19,26 +19,28 @@ export default function Home() {
   }, []);
 
   const sendNotification = async () => {
-    if (!message.trim()) {
-      alert("Please enter a notification message!");
-      return;
-    }
-
-    if ("vibrate" in navigator) {
-      navigator.vibrate(200);
-    }
-
     if ("Notification" in window) {
       if (Notification.permission === "granted") {
-        new Notification(message);
+        new Notification(message || "New Notification!");
       } else if (Notification.permission !== "denied") {
         const permission = await Notification.requestPermission();
         if (permission === "granted") {
-          new Notification(message);
+          new Notification(message || "New Notification!");
+        } else {
+          alert("Notifications are blocked. Enable them in your browser settings.");
         }
+      } else {
+        alert("Notifications are blocked. Enable them in your browser settings.");
       }
+    } else {
+      alert("Your browser does not support notifications.");
     }
-
+  
+    if ("vibrate" in navigator) {
+      navigator.vibrate(200);
+    }
+  };
+  
     const newNotifications = [{ message, timestamp: new Date().toISOString() }, ...notifications];
     setNotifications(newNotifications);
     localStorage.setItem("notifications", JSON.stringify(newNotifications));
